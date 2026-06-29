@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>TunaNoCrust Tuning Simulator</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="scanlines" aria-hidden="true"></div>
+
+  <header class="topbar">
+    <div>
+      <p class="eyebrow">Static stack prototype · no dependencies</p>
+      <h1>TunaNoCrust <span>Tuning Simulator</span></h1>
+    </div>
+    <div class="status-strip" aria-live="polite">
+      <div class="status-pill">
+        <span>Budget</span>
+        <strong id="budgetReadout">$0</strong>
+      </div>
+      <div class="status-pill">
+        <span>Spent</span>
+        <strong id="spentReadout">$0</strong>
+      </div>
+      <div class="status-pill">
+        <span>Result</span>
+        <strong id="resultReadout">Ready</strong>
+      </div>
+    </div>
+  </header>
+
+  <main class="layout">
+    <section class="panel work-order">
+      <div class="panel-title-row">
+        <div>
+          <p class="eyebrow">Customer brief</p>
+          <h2>Work Order</h2>
+        </div>
+        <button id="resetBtn" class="ghost-button" type="button">Reset</button>
+      </div>
+
+      <label class="field-label" for="jobSelect">Job</label>
+      <select id="jobSelect" class="select"></select>
+
+      <div id="jobCard" class="job-card"></div>
+    </section>
+
+    <section class="panel parts-panel">
+      <div class="panel-title-row">
+        <div>
+          <p class="eyebrow">Spend money · regret later</p>
+          <h2>Parts Bay</h2>
+        </div>
+      </div>
+      <div id="partsList" class="parts-list"></div>
+    </section>
+
+    <section class="panel tune-panel">
+      <div class="panel-title-row">
+        <div>
+          <p class="eyebrow">Four dimensions of poor choices</p>
+          <h2>Tune Console</h2>
+        </div>
+      </div>
+
+      <div id="tuneControls" class="tune-controls"></div>
+
+      <div class="maps-grid">
+        <div>
+          <h3>Fuel Map AFR</h3>
+          <div id="fuelMap" class="map-table"></div>
+        </div>
+        <div>
+          <h3>Ignition Map</h3>
+          <div id="timingMap" class="map-table"></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel dyno-panel">
+      <div class="panel-title-row dyno-title-row">
+        <div>
+          <p class="eyebrow">SR20DET-inspired fictional test mule</p>
+          <h2>Dyno Cell</h2>
+        </div>
+        <button id="dynoBtn" class="primary-button" type="button">Run Pull</button>
+      </div>
+
+      <div class="dyno-stage">
+        <canvas id="dynoCanvas" width="900" height="420" aria-label="Dyno graph"></canvas>
+        <div class="live-gauges">
+          <div class="gauge"><span>RPM</span><strong id="liveRpm">0</strong></div>
+          <div class="gauge"><span>Boost</span><strong id="liveBoost">0 psi</strong></div>
+          <div class="gauge"><span>AFR</span><strong id="liveAfr">--</strong></div>
+          <div class="gauge"><span>Knock</span><strong id="liveKnock">0</strong></div>
+        </div>
+      </div>
+
+      <div class="metrics-grid" id="metricsGrid"></div>
+    </section>
+
+    <section class="panel engine-panel">
+      <div class="panel-title-row">
+        <div>
+          <p class="eyebrow">Abstract engine diagram</p>
+          <h2>S20-DET Mule</h2>
+        </div>
+      </div>
+
+      <svg id="engineDiagram" class="engine-diagram" viewBox="0 0 720 350" role="img" aria-label="Abstract turbo engine diagram">
+        <defs>
+          <filter id="glow">
+            <feGaussianBlur stdDeviation="3.5" result="coloredBlur"/>
+            <feMerge>
+              <feMergeNode in="coloredBlur"/>
+              <feMergeNode in="SourceGraphic"/>
+            </feMerge>
+          </filter>
+        </defs>
+
+        <text x="24" y="34" class="diagram-label">INTAKE</text>
+        <rect id="diagIntercooler" class="diag-part" x="24" y="55" width="120" height="74" rx="10"></rect>
+        <path class="diag-line" d="M145 92 L230 92" />
+
+        <circle id="diagTurbo" class="diag-part turbo" cx="250" cy="92" r="42"></circle>
+        <circle class="diag-detail" cx="250" cy="92" r="18"></circle>
+        <path class="diag-line" d="M292 92 L350 92 L350 142" />
+
+        <text x="350" y="34" class="diagram-label">CYLINDER BANK</text>
+        <g id="diagBlock">
+          <rect class="diag-block" x="328" y="142" width="260" height="112" rx="12"></rect>
+          <rect id="diagCyl1" class="diag-cylinder" x="348" y="164" width="42" height="68" rx="6"></rect>
+          <rect id="diagCyl2" class="diag-cylinder" x="408" y="164" width="42" height="68" rx="6"></rect>
+          <rect id="diagCyl3" class="diag-cylinder" x="468" y="164" width="42" height="68" rx="6"></rect>
+          <rect id="diagCyl4" class="diag-cylinder" x="528" y="164" width="42" height="68" rx="6"></rect>
+        </g>
+
+        <path class="diag-line exhaust" d="M588 190 C640 190, 666 160, 684 112" />
+        <text x="610" y="96" class="diagram-label">EXHAUST</text>
+
+        <rect id="diagFuel" class="diag-part" x="48" y="226" width="170" height="64" rx="10"></rect>
+        <text x="75" y="264" class="diagram-label big">FUEL</text>
+        <path class="diag-line fuel" d="M218 258 L328 216" />
+
+        <rect id="diagEcu" class="diag-part" x="520" y="44" width="132" height="70" rx="10"></rect>
+        <text x="554" y="85" class="diagram-label big">ECU</text>
+        <path class="diag-line ecu" d="M520 78 L410 142" />
+      </svg>
+
+      <div id="engineStatus" class="engine-status"></div>
+    </section>
+
+    <section class="panel log-panel">
+      <div class="panel-title-row">
+        <div>
+          <p class="eyebrow">Dyno operator commentary</p>
+          <h2>Pull Log</h2>
+        </div>
+      </div>
+      <ol id="pullLog" class="pull-log"></ol>
+    </section>
+  </main>
+
+  <footer class="footer-note">
+    <p>
+      Prototype note: this is a fictionalized, gamey SR20DET-inspired tuning toy. It is not a real tuning guide, calibration tool, or safe mechanical reference.
+    </p>
+  </footer>
+
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>

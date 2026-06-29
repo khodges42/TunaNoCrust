@@ -1,28 +1,66 @@
-# TunaNoCrust
+# TunaNoCrust Tuning Simulator
 
-A demo engine tuning simulation game where you can modify, tune, and optimize various engines to achieve maximum performance.
+A dependency-free static HTML/CSS/JS prototype for an SR20DET-inspired dyno tuning game jam.
 
-## Overview
+## Run it
 
-TunaNoCrust is an interactive engine tuning simulator that lets you experiment with real-world engine configurations. Start with authentic engines and adjust parameters like fuel mixture, ignition timing, boost levels, and more to see how they affect performance metrics.
+Open `index.html` in a browser.
 
-## Featured Engines
+Because this uses ES modules, some browsers may block `file://` module loading. If that happens, run a tiny local server from this folder:
 
-### SR20DET
-The legendary S-chassis platform engine. The SR20DET is a 2.0L turbocharged 4-cylinder that has become iconic in the tuning community. Known for its responsive turbo characteristics and high tuning potential, the SR20DET serves as the flagship engine in our simulation with support for a wide range of modifications and tuning scenarios.
+```bash
+python3 -m http.server 8080
+```
 
-## Features
+Then open:
 
-- **Engine Tuning Simulator**: Adjust parameters and see real-time performance changes
-- **Multiple Engine Support**: Start with the SR20DET, expand to additional engines
-- **Performance Metrics**: Track HP, torque, fuel consumption, and more
-- **Realistic Physics**: Simulation based on automotive tuning principles
-- **Customization**: Modify boost levels, fuel mapping, timing, and components
+```text
+http://localhost:8080
+```
 
-## Getting Started
+## Project structure
 
-More information coming soon!
+```text
+index.html          Main static page
+styles.css          Visual style/layout
+js/data.js          Jobs, parts, tune controls, flavor text
+js/sim.js           Core simulation formulas and scoring
+js/dynoView.js      Canvas dyno graph renderer
+js/ui.js            DOM binding and state rendering
+js/app.js           Entry point
+```
 
-## License
+## Where to tweak first
 
-This project is licensed under the GNU General Public License v3.0 - see the LICENSE file for details.
+Most balancing should start in `js/data.js`:
+
+- Add jobs in `JOBS`
+- Add parts in `PART_CATEGORIES`
+- Change slider ranges in `TUNE_CONTROLS`
+- Add failure/success sayings in `FAILURE_MESSAGES`, `SUCCESS_MESSAGES`, and `WARNING_MESSAGES`
+
+Formula behavior lives in `js/sim.js`, especially:
+
+- `calculateHardware()` for how parts shape response/spool/limits
+- `simulateDyno()` for power curve, risk, and pass/fail logic
+- `generateMaps()` for the fake fuel/timing table UI
+
+## Design intent
+
+This is not a real tuning guide. It is deliberately fake-but-believable. The goal is to make the player feel like a tuner making tradeoffs:
+
+- boost vs heat
+- timing vs knock
+- lean/crisp vs rich/safe
+- top-end vs response
+- cheap parts vs chaos
+- forged internals as permission to be stupid
+
+## Suggested next additions
+
+- Customer reputation and cash rewards
+- Part unlocks by shop level
+- Better animated engine diagram states
+- Editable map cells instead of derived fake maps
+- More failure event art/sound
+- A seeded daily challenge
